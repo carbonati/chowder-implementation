@@ -10,30 +10,30 @@ CHOWDER is an approach for predicting general localized diseases in whole-slide-
 ![image](https://github.com/carbonati/chowder-implementation/blob/master/png/metastasis_image.png)
 
 ### The Data
-The data used for this specific study comes from the [Camelyon Challenge](https://camelyon16.grand-challenge.org/), which is a collection of whole-slide-images, however, the WSI dataset provided has already been preprocessed with the use of tissue detection, color normalization, tiling. After those initial preprocessing steps each slide has been reduced to a uniform random sample of tiles with a resolution of 224 x 224 pixels. After that, each tile is transformed into a feature vector by using the tiles pre-output layer from  a pre-trained ResNet-50 architecture. Each feature vector consists of `P = 2048` floating point values, which is to be used as input for the CHOWDER network. These `P = 2048` floating point values are referred to as a patients ResNet features, which span from 256 to 1000 feature vectors for each patient in the dataset. 
+The data used for this specific study comes from the [Camelyon Challenge](https://camelyon16.grand-challenge.org/), which is a collection of whole-slide-images classified as either healthy or exhibits metastases. However, the WSI dataset provided by Owkin has already been preprocessed with the use of tissue detection, color normalization, and tiling. After those initial preprocessing steps each slide is then reduced to a uniform random sample of tiles each with a resolution of 224 x 224 pixels. After that, each tile is then transformed into a feature vector by using the tiles pre-output layer from  a pre-trained ResNet-50 architecture. Each feature vector consists of `P = 2048` floating point values, which is to be used as input for our CHOWDER network. These `P = 2048` floating point values are referred to as a patients ResNet features, which span from 40 to 1000 feature vectors for each patient in the dataset. 
 
 
 ### The network
-The CHOWDER network architecture consists of three modules (after the preprocessing steps are finished ) - feature embedding, multiple instance learning (top instances and negative evidence), and a multi-layer perceptron classifier. 
+The CHOWDER architecture consists of three modules (after the preprocessing steps are finished) - `feature embedding`, `multiple instance learning` (top instances and negative evidence), and a `multi-layer perceptron classifier`. 
 
 ![image](https://github.com/carbonati/chowder-implementation/blob/master/png/chowder_architecture.png)
 
 #### Feature Embedding
-A set of 1-D embeddings are given to each patient by using a one-dimensional convolutional layer whose kernel has the same dimensionality as each ResNet Feature, `P = 2048`. This embedding layer will also take an a stride of `P` as well and can be found in the class  `chowder.model.ChowderArchitecture` as
+A set of 1-D feature embeddings are given to each patient by using a one-dimensional convolutional layer whose kernel has the same dimensionality as each ResNet Feature, `P = 2048`. This embedding layer will also take on a stride of `P` and can be found in the class `chowder.model.ChowderArchitecture` as,
 ```python
 self.embedding = nn.Conv1d(1, 1, 2048, stride=2048, padding=0)
 ```
-where each patients set of ResNet features have been flatted into `N x P` dimensional vector, such that `N` is the number of tiles a given patient has. The 1-D conv layer will slide across the flattened feature vector sharing weights across tiles.
+where each patients set of ResNet features have been flatted into `N x P` dimensional vector, such that `N` is the number of tiles a given patient is sampled. The 1-D conv layer will slide across the flattened feature vector sharing weights across tiles.
 
 #### Top Instances and Negative Evidence
-After feature embedding, each patient will have their N x 1  dimensional descriptor. The next step is for us to make use of the `MinMaxPoolingFunction` found in `chowder.minmax_pooling.py` where each descriptor is sorted in descending order
+After feature embedding, each patient will then have their N x 1 dimensional descriptor. The next step is for us to make use of the `MinMaxPoolingFunction` found in `chowder.minmax_pooling.py` where each descriptor is sorted in descending order
 ```python
 # sort the feature embedding and save the max & min indices for backprop
 x_sorted, x_indices = torch.sort(x_input.view(batch_size, n_regions), 
 	dim=1, descending=True)
 ```
 
-After sorting the output feature embedding we want to take top and bottom `R` entries, which tell which regions have the most information and which regions support the absence of the class. We can grab the `R` max and min values with the lines,
+After sorting the output feature embedding we want to take top and bottom `R` entries, which tell us which regions have the most information and which regions support the absence of the class. We can grab the `R` max and min values with the following lines,
 
 ```python
 self.indices_max = x_indices.narrow(1, 0, self.R)
@@ -43,16 +43,16 @@ output_max = x_sorted.narrow(1, 0, self.R)
 output_min = x_sorted.narrow(1, -self.R, self.R)
 ```
 
-It's important for us to store the indices used as the top and bottom instances since those are the only indices we will want to propogate back through the network when we are learning. The last step will be for us to concatenate the top and bottom instances together for us to pass to a MLP classifier
+It's important for us to store the indices used as the top and bottom instances since those are the only indices we will want to propogate back through the network when we are training. The last step for us will include concatenating the top and bottom instances together to pass as input for the MLP classifier,
 ```python
 # concat the top & bottom instances for a MLP classifier (Figure 2)
 output = torch.cat((output_max, output_min), dim=1)
 ```
-which will give us a `2R x 1` output.
+after concatenating both outputs we will have a `2R x 1` output vector.
 
 
 #### Multi-layer Perceptron (MLP) Classifier
-The last piece of the architecture is to optimize the interaction between the top and bottom instances by passing them into a MLP modeled as,
+The last piece of the architecture is to optimize the interaction between the top and bottom instances by passing them into a MLP with the form,
 
 ```python
 self.classifier = nn.Sequential(
@@ -69,7 +69,7 @@ self.classifier = nn.Sequential(
 
 The final output is passed through one last sigmoid function and used for evaluation.
 
-The code should be annotated thoroughly with comments to guide what important are accomplishing. 
+The code should be annotated thoroughly with comments to guide what important lines are accomplishing. 
 
 
 
@@ -106,7 +106,7 @@ All dependencies can be installed via `pip install requirements.txt`
 * Scipy
 * scikit-learn
 
-Make sure data.zip is has been unzipped in the root directory via `unzip data.zip .`
+Make sure data.zip has been unzipped in the root directory via `unzip data.zip .`
 
 ## Reproducing the Experiment
 

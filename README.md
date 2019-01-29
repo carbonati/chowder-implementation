@@ -73,8 +73,11 @@ The code should be annotated thoroughly with comments to guide what important li
 
 ### Usage
 
+Here's a code snippet of how to train a CHOWDER network over a PyTorch data loader
+
 ```python
 from chowder.model import ChowderArchitecture, ChowderModel
+from chowder.maxmin_pooling import MaxMinPooling
 from torch.utils.data import DataLoader
 
 data_loader = DataLoader(torch_dataset, **kwargs)
@@ -89,6 +92,8 @@ for epoch in range(num_epochs):
     chowder_model.fit(data_loader)
     y_pred = chowder_model.predict(data_loader)    
 ```
+
+**Note**: the input data from `data_loader` passed into the network should be a torch tensor of shape `(batch_size, 1, P)`.
 
 ## Performance
 

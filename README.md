@@ -30,7 +30,7 @@ After feature embedding, each patient will then have their N x 1 dimensional des
 ```python
 # sort the feature embedding and save the max & min indices for backprop
 x_sorted, x_indices = torch.sort(x_input.view(batch_size, n_regions), 
-	dim=1, descending=True)
+                                 dim=1, descending=True)
 ```
 
 After sorting the output feature embedding we want to take top and bottom `R` entries, which tell us which regions have the most information and which regions support the absence of the class. We can grab the `R` max and min values with the following lines,
@@ -71,7 +71,25 @@ The final output is passed through one last sigmoid function and used for evalua
 
 The code should be annotated thoroughly with comments to guide what important lines are accomplishing. 
 
+### Usage
 
+```python
+from chowder.model import ChowderArchitecture, ChowderModel
+from torch.utils.data import DataLoader
+
+data_loader = DataLoader(torch_dataset, **kwargs)
+
+num_instances = 5 # R
+num_epochs = 10
+
+# instantiate a new CHOWDER model each split
+maxmin_pooling = MaxMinPooling(R=num_instances)
+chowder_model = ChowderModel(ChowderArchitecture, maxmin_pooling)
+
+for epoch in range(num_epochs):
+    chowder_model.fit(train_dl)
+    y_pred = chowder_model.predict(data_loader)    
+```
 
 ## Performance
 
@@ -117,18 +135,18 @@ To train the CHOWDER model on the resnet features simply run `train.py` with
 `python3 train.py --train_data_path data/train_input/resnet_features --train_label_path data/train_output.csv --num_epochs 30 --num_splits 5 --num_instances 5`
 #### Arguments
 - `train_data_path`: Path to directory storing resnet features
-	- default=data/train_input/resnet_features
+    - default=data/train_input/resnet_features
 - `train_label_path`: Path to .csv storing training labels
-	- default=data/train_output.csv
+    - default=data/train_output.csv
 - `num_epochs` (required): Number of epochs for each validation split
 - `num_splits` (required): Number of splits for cross validation
 - `num_instances` (required): Referred to as $R$ in the paper. The number of top & bottom instances to use after feature embedding
 - `batch_size`: Batch size for training
-	- default=10
+    - default=10
 - `save_model_dir`: Directory to save validation models if a path is given
-	- default=None
+    - default=None
 - `num_workers`: Number of workers to speed up training time (4 cores on my beast local)
-	- default=multiprocessing.cpu_count()
+    - default=multiprocessing.cpu_count()
 
 The script took roughly 1 hour to run using just 4 cores. If no `save_model_dir` is passed you can use the models found in the `models` directory for testing, otherwise each model will be saved to `save_model_dir` after training, which can then be used to predict test data using `test.py`
 
@@ -139,20 +157,20 @@ To predict the test data simply run `test.py` with
 
 #### Arguments
 - `test_data_path`: Path to directory storing test resnet features
-	- default=data/test_input/resnet_features
+    - default=data/test_input/resnet_features
 - `train_label_path`: Path to .csv with test labels
-	- default=data/test_output.csv
+    - default=data/test_output.csv
 - `num_instances` (required): Referred to as $R$ in paper paper. The number of top & bottom instances to use after feature embedding
 - `model_dir`: Directory holding the CHOWDER model(s)
-	- required
+    - required
 - `model_name`: Name of model to load from `model_dir`, but will be ignored if `stack_models = True`
-	- default=''
+    - default=''
 - `stack_models`: Boolean whether to use all models in `model_dir` to predict on the test data and average the results
-	- default=False
+    - default=False
 - `batch_size`: Batch size for training
-	- default=10
+    - default=10
 - `num_workers`: Number of workers to speed up training time (4 cores on my beast local)
-	- default=multiprocessing.cpu_count()
+    - default=multiprocessing.cpu_count()
 
 The above command will load in all CHOWDER models from `model_dir`, use each model to predict over the test data, then average the predictions from each model to output a final test prediction. The results should be saved to a pandas DataFrame as `test_chowder_5_instances.csv`. If you would like to use just one model you can leave `stack_models=False` and pass in the name of the model of your choice using `model_name`
 
@@ -167,8 +185,8 @@ A large and inefficient method found in this implementation is the use of 0 padd
 lengths = [features.shape[1] for features in resnet_features]
 chowder_features = torch.zeros(len(targets), 1, max(lengths))   
 for i, features in enumerate(resnet_features):
-	feature_length = lengths[i]
-	chowder_features[i, 0, :feature_length] = features[:feature_length]
+    feature_length = lengths[i]
+    chowder_features[i, 0, :feature_length] = features[:feature_length]
 ```
 
 There is likely a different approach that I'm not considering, but this seemed like the best fix to account for non-fixed sample sizes. Another issue this brings however, is the possibility that if there are no values < 0 in the feature embedding then the bottom instances will be 0, which will point to the `R` padded values. 

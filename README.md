@@ -1,6 +1,6 @@
 # CHOWDER Implementation
 
-PyTorch implementation of Classification and Disease Localization in Histopathology Using Only Global Labels: A Weakly-Supervised Approach(https://arxiv.org/pdf/1802.02212.pdf) published by Owkin, Inc.
+PyTorch implementation of [Classification and Disease Localization in Histopathology Using Only Global Labels: A Weakly-Supervised Approach](https://arxiv.org/pdf/1802.02212.pdf) published by Owkin, Inc.
 
 
 ## Documentation
@@ -10,7 +10,7 @@ CHOWDER is a flexible algorithm that utilizes pre-trained deep convolutional net
 ![image](https://github.com/carbonati/chowder-implementation/blob/master/png/metastasis_image.png)
 
 ### The Data
-The data used for this specific study comes from the Camelyon Challenge(https://camelyon16.grand-challenge.org/), which is a collection of whole-slide-images, however, the WSI dataset provided has already been preprocessed with the use of tissue detection, color normalization, tiling. After those initial preprocessing steps each slide has been reduced to a uniform random sample of tiles with a resolution of 224 x 224 pixels. After that, each tile is transformed into a feature vector by using the tiles pre-output layer from  a pre-trained ResNet-50 architecture. Each feature vector consists of `P = 2048` floating point values, which is to be used as input for the CHOWDER network. These `P = 2048` floating point values are referred to as a patients ResNet features, which span from 256 to 1000 feature vectors for each patient in the dataset. 
+The data used for this specific study comes from the [Camelyon Challenge](https://camelyon16.grand-challenge.org/), which is a collection of whole-slide-images, however, the WSI dataset provided has already been preprocessed with the use of tissue detection, color normalization, tiling. After those initial preprocessing steps each slide has been reduced to a uniform random sample of tiles with a resolution of 224 x 224 pixels. After that, each tile is transformed into a feature vector by using the tiles pre-output layer from  a pre-trained ResNet-50 architecture. Each feature vector consists of `P = 2048` floating point values, which is to be used as input for the CHOWDER network. These `P = 2048` floating point values are referred to as a patients ResNet features, which span from 256 to 1000 feature vectors for each patient in the dataset. 
 
 
 ### The network
@@ -30,7 +30,7 @@ After feature embedding, each patient will have their N x 1  dimensional descrip
 ```python
 # sort the feature embedding and save the max & min indices for backprop
 x_sorted, x_indices = torch.sort(x_input.view(batch_size, n_regions), 
-								 dim=1, descending=True)
+	dim=1, descending=True)
 ```
 
 After sorting the output feature embedding we want to take top and bottom `R` entries, which tell which regions have the most information and which regions support the absence of the class. We can grab the `R` max and min values with the lines,

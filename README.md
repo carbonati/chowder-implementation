@@ -10,7 +10,7 @@ CHOWDER is an approach for predicting general localized diseases in whole-slide-
 ![image](https://github.com/carbonati/chowder-implementation/blob/master/png/metastasis_image.png)
 
 ### The Data
-The data used for this specific study comes from the [Camelyon Challenge](https://camelyon16.grand-challenge.org/), which is a collection of whole-slide-images classified as either healthy or exhibits metastases. However, the WSI dataset provided by Owkin has already been preprocessed with the use of tissue detection, color normalization, and tiling. After those initial preprocessing steps each slide is then reduced to a uniform random sample of tiles each with a resolution of 224 x 224 pixels. After that, each tile is then transformed into a feature vector by using the tiles pre-output layer from  a pre-trained ResNet-50 architecture. Each feature vector consists of `P = 2048` floating point values, which is to be used as input for our CHOWDER network. These `P = 2048` floating point values are referred to as a patients ResNet features, which span from 40 to 1000 feature vectors for each patient in the dataset. 
+The data used for this specific study comes from the [Camelyon Challenge](https://camelyon16.grand-challenge.org/), which is a collection of whole-slide-images labeled as healthy or exhibits metastases. However, the WSI dataset provided by Owkin has already been preprocessed with the use of tissue detection, color normalization, and tiling. After those initial preprocessing steps each slide is then reduced to a uniform random sample of tiles each with a resolution of 224 x 224 pixels. After that, each tile is then transformed into a feature vector by using the tiles pre-output layer from  a pre-trained ResNet-50 architecture. Each feature vector consists of `P = 2048` floating point values, which is to be used as input for our CHOWDER network. These `P = 2048` floating point values are referred to as a patients ResNet features, which span from 40 to 1000 feature vectors for each patient in the dataset. 
 
 
 ### The network
@@ -52,7 +52,7 @@ after concatenating both outputs we will have a `2R x 1` output vector.
 
 
 #### Multi-layer Perceptron (MLP) Classifier
-The last piece of the architecture is to optimize the interaction between the top and bottom instances by passing them into a MLP with the form,
+The last piece of the architecture is to optimize the interactions between the top and bottom instances by passing them into a MLP with the form,
 
 ```python
 self.classifier = nn.Sequential(
@@ -92,7 +92,7 @@ CHOWDER |  CV (AUC) | Test (AUC)
 (R = 5, E = 5) | 0.631 | 0.649 | 
 (R = 10, E = 5) | 0.701 | 0.846 | 
 
-I did not try any networks with `R` > 10 or `E` > 5 as the larger ensemble models started to be become computationally heavy to train. While running cross-validation the validation AUC experienced very high variance, which is likely due to the low amount of training data. There was also a high degree of overfit, which I struggled with to overcome. 
+I did not try any networks with `R` > 10 or `E` > 5 as the larger ensemble models started to be become computationally heavy to train. While running cross-validation the validation AUC experienced very high variance, which is likely due to the low amount of training data. There was also a degree of overfit, which I struggled with to overcome. 
 
 ## Requirements
 
@@ -130,7 +130,7 @@ To train the CHOWDER model on the resnet features simply run `train.py` with
 - `num_workers`: Number of workers to speed up training time (4 cores on my beast local)
 	- default=multiprocessing.cpu_count()
 
-The script took roughly ~1 hour to run using just 4 cores. If no `save_model_dir` is passed you can use the models found in the `models` directory for testing, otherwise each model will be saved to `save_model_dir` after training, which can then be used to predict test data using `test.py`.
+The script took roughly 1 hour to run using just 4 cores. If no `save_model_dir` is passed you can use the models found in the `models` directory for testing, otherwise each model will be saved to `save_model_dir` after training, which can then be used to predict test data using `test.py`
 
 ### Test Predictions
 To predict the test data simply run `test.py` with 

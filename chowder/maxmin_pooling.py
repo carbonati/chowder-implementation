@@ -3,8 +3,6 @@ from torch.autograd import Function
 import torch.nn as nn
 
 
-from torch.autograd import Function
-
 class MaxMinPoolingFunction(Function):
     """MinMax Layer for pooling the top and bottom instances of a given 1D embedding (section 2.3)"""
     def __init__(self, R):

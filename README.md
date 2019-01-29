@@ -116,7 +116,7 @@ I did not try any networks with `R` > 10 or `E` > 5 as the larger ensemble model
 
 Python 3.6+
 
-All dependencies can be installed via `pip install requirements.txt`
+All dependencies can be installed via `pip install -r requirements.txt`
 
 * PyTorch 1.0.0
 * Pandas

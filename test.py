@@ -52,7 +52,7 @@ if __name__ == '__main__':
     if args.stack_models:
         preds = []
         model_filenames = os.listdir(args.model_dir)
-        for model_name in model_filenames[2:]:
+        for model_name in model_filenames:
             # don't need to reinstanciate a new model to load new weights!
             try:
                 chowder_model.load(os.path.join(args.model_dir, model_name))

@@ -5,7 +5,7 @@ PyTorch implementation of [Classification and Disease Localization in Histopatho
 
 ## Documentation
 
-CHOWDER is a flexible algorithm that utilizes pre-trained deep convolutional networks, weakly-supervised learners, feature embeddings, and multiple instance learning via top instances and negative evidence scoring to detect metastases.
+CHOWDER is an approach for predicting general localized diseases in whole-slide-imaging by utilizing pre-trained deep convolutional networks, weakly-supervised learners, feature embeddings, and multiple instance learning via top instances and negative evidence scoring.
 
 ![image](https://github.com/carbonati/chowder-implementation/blob/master/png/metastasis_image.png)
 

@@ -7,7 +7,7 @@ PyTorch implementation of Classification and Disease Localization in Histopathol
 
 CHOWDER is a flexible algorithm that utilizes pre-trained deep convolutional networks, weakly-supervised learners, feature embeddings, and multiple instance learning via top instances and negative evidence scoring to detect metastases.
 
-![image](https://github.com/carbonati)
+![image](https://github.com/carbonati/chowder-implementation/blob/master/png/metastasis_image.png)
 
 ### The Data
 The data used for this specific study comes from the Camelyon Challenge(https://camelyon16.grand-challenge.org/), which is a collection of whole-slide-images, however, the WSI dataset provided has already been preprocessed with the use of tissue detection, color normalization, tiling. After those initial preprocessing steps each slide has been reduced to a uniform random sample of tiles with a resolution of 224 x 224 pixels. After that, each tile is transformed into a feature vector by using the tiles pre-output layer from  a pre-trained ResNet-50 architecture. Each feature vector consists of `P = 2048` floating point values, which is to be used as input for the CHOWDER network. These `P = 2048` floating point values are referred to as a patients ResNet features, which span from 256 to 1000 feature vectors for each patient in the dataset. 
@@ -16,7 +16,7 @@ The data used for this specific study comes from the Camelyon Challenge(https://
 ### The network
 The CHOWDER network architecture consists of three modules (after the preprocessing steps are finished ) - feature embedding, multiple instance learning (top instances and negative evidence), and a multi-layer perceptron classifier. 
 
-![image](https://github.com/carbonati)
+![image](https://github.com/carbonati/chowder-implementation/blob/master/png/chowder_architecture.png)
 
 #### Feature Embedding
 A set of 1-D embeddings are given to each patient by using a one-dimensional convolutional layer whose kernel has the same dimensionality as each ResNet Feature, `P = 2048`. This embedding layer will also take an a stride of `P` as well and can be found in the class  `chowder.model.ChowderArchitecture` as

@@ -82,12 +82,11 @@ data_loader = DataLoader(torch_dataset, **kwargs)
 num_instances = 5 # R
 num_epochs = 10
 
-# instantiate a new CHOWDER model each split
 maxmin_pooling = MaxMinPooling(R=num_instances)
 chowder_model = ChowderModel(ChowderArchitecture, maxmin_pooling)
 
 for epoch in range(num_epochs):
-    chowder_model.fit(train_dl)
+    chowder_model.fit(data_loader)
     y_pred = chowder_model.predict(data_loader)    
 ```
 

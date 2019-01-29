@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score, log_loss
 from torch.utils.data import DataLoader
-from chowder.dataset import ChowderDataset, chowder_collate
+from dataset import ChowderDataset, chowder_collate
 from chowder.model import ChowderArchitecture, ChowderModel
 from chowder.maxmin_pooling import MaxMinPooling
 import argparse

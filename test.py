@@ -4,13 +4,12 @@ import numpy as np
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score, log_loss
 from torch.utils.data import DataLoader
-from chowder.dataset import ChowderDataset, chowder_collate
+from dataset import ChowderDataset, chowder_collate
 from chowder.model import ChowderArchitecture, ChowderModel
 from chowder.maxmin_pooling import MaxMinPooling
 import argparse
 import datetime
 import multiprocessing
-
 
 
 if __name__ == '__main__':
@@ -38,7 +37,6 @@ if __name__ == '__main__':
                         help='4 core beast mode')   
 
     args = parser.parse_args()
-
 
     # MUST use the same R (`num_instances`) used for training to load model weights
     df_test = pd.read_csv(args.test_label_path)

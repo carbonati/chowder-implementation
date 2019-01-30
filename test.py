@@ -57,15 +57,16 @@ if __name__ == '__main__':
             try:
                 chowder_model.load(os.path.join(args.model_dir, model_name))
             except RuntimeError:
-                print('Make sure `--num_instances` is the same R as the model \
-                       being used was trained with!')
-                raise 
+                raise Exception("Make sure `--num_instances` is the same R the model being used was trained with!")
             y_preds = chowder_model.predict(test_dl)
             preds.append(y_preds)
         # average the predictions (ensemble modeling)
         preds_test = np.mean(preds, axis=0)
     else:
-        chowder_model.load(os.path.join(args.model_dir, args.model_name))
+        try:
+            chowder_model.load(os.path.join(args.model_dir, args.model_name))
+        except RuntimeError:
+            raise Exception("Make sure `--num_instances` is the same R as the model being used was trained with!")
         preds_test = chowder_model.predict(test_dl)
         model_filenames = [args.model_name]
 

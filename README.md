@@ -200,6 +200,16 @@ I struggled with both too much variability on the validation set along with over
 
 An area of focus that I would improve if I were to spend more time with respect to the code is handling errors and raising exceptions. 
 
+## Testing
+
+For testing simply run the following command in the root directory:
+
+```
+python3 -m unittest tests.test_chowder
+```
+
+
 P.S.
 
 Working for Owkin would mean everything to me!!!
+

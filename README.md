@@ -128,7 +128,7 @@ All dependencies can be installed via `pip install -r requirements.txt`
 * Scipy
 * scikit-learn
 
-Make sure data.zip has been unzipped in the root directory via `unzip data.zip .`
+Make sure data.zip has been unzipped in the root directory via `unzip data.zip`
 
 ## Reproducing the Experiment
 

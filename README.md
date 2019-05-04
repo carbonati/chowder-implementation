@@ -207,9 +207,3 @@ For testing simply run the following command in the root directory:
 ```
 python3 -m unittest tests.test_chowder
 ```
-
-
-P.S.
-
-Working for Owkin would mean everything to me!!!
-
